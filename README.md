@@ -2,176 +2,97 @@
 
 Delphes
 =======
+README original en [README.original.md](./README.original.md)
 
-Delphes is a C++ framework, performing a fast multipurpose detector response simulation.
+# ERRORES
 
-More details can be found on the Delphes website http://cp3.irmp.ucl.ac.be/projects/delphes
-
-Quick start with Delphes
-========================
-
-Commands to get the code:
-
+## Please make sure root-config can be found in path.
+Hay que ejecutar:
 ```
-   wget http://cp3.irmp.ucl.ac.be/downloads/Delphes-3.4.2.tar.gz
-
-   tar -zxf Delphes-3.4.2.tar.gz
+# also available: thisroot.{csh,fish,bat}
+$ source root/bin/thisroot.sh
 ```
+Ver: https://root.cern/install/
 
-Commands to compile the code:
+# DESCRIPCIÓN
+En `cards` están los detectores a escoger en el lenguaje TCL.
 
+## https://indico.cern.ch/event/315979/attachments/606727/834937/delphes_tutorial_intro.pdf
+Las diapositivas donde muestra como se "programa" un calorímetro o la propagación de partículas (25 en adelante) son útiles
+
+## https://indico.cern.ch/event/315979/attachments/606727/834936/delphes_tutorial_hands-on.pdf
+* ROOT tree is a set of branches
+* Branch contains a collection of analysis objects for every event. Information is stored in TClonesArray, which enables efficient storage an retrieval
+* ExRootTreeReader – class simplifying access to ROOT tree data
+
+### Modules Information
+
+* Modules communicate entirely via collections of universal objects (TObjArray of Candidate four-vector like objects).
+* Any module can access TObjArrays produced by other modules using ImportArray method
+
+### Configuration
+
+* Basado en TCL
+* activate a module:
 ```
-   cd Delphes-3.4.2
-
-   make
+module ModuleClass ModuleName ModuleConfigurationBody
 ```
-
-Finally, we can run Delphes:
-
+* define order of execution of various modules:
 ```
-   ./DelphesHepMC
-```
-
-Command line parameters:
-
-```
-   ./DelphesHepMC config_file output_file [input_file(s)]
-     config_file - configuration file in Tcl format
-     output_file - output file in ROOT format,
-     input_file(s) - input file(s) in HepMC format,
-     with no input_file, or when input_file is -, read standard input.
-```
-
-Let's simulate some Z->ee events:
-
-```
-   wget http://cp3.irmp.ucl.ac.be/downloads/z_ee.hep.gz
-   gunzip z_ee.hep.gz
-   ./DelphesSTDHEP cards/delphes_card_CMS.tcl delphes_output.root z_ee.hep
-```
-
-or
-
-```
-   curl -s http://cp3.irmp.ucl.ac.be/downloads/z_ee.hep.gz | gunzip | ./DelphesSTDHEP cards/delphes_card_CMS.tcl delphes_output.root
-```
-
-For more detailed documentation, please visit https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook
-
-Configure Delphes on lxplus.cern.ch
-====================================
-
-```
-git clone git://github.com/delphes/delphes.git Delphes
-
-cd Delphes
-
-source  /afs/cern.ch/sw/lcg/external/gcc/4.9.3/x86_64-slc6/setup.sh
-
-source /afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.00/x86_64-slc6-gcc49-opt/root/bin/thisroot.sh
-
-make 
-```
-
-Simple analysis using TTree::Draw
-=================================
-
-Now we can start [ROOT](root.cern) and look at the data stored in the output ROOT file.
-
-Start ROOT and load Delphes shared library:
-
-```
-   root -l
-   gSystem->Load("libDelphes");
-```
-
-Open ROOT file and do some basic analysis using Draw or TBrowser:
-
-```
-   TFile *f = TFile::Open("delphes_output.root");
-   f->Get("Delphes")->Draw("Electron.PT");
-   TBrowser browser;
-```
-
-Notes:
-* ```Delphes``` is the tree name. It can be learned e.g. from TBrowser.
-* ```Electron```is the branch name; ```PT``` is a variable (leaf) of this branch.
-
-Complete description of all branches can be found in [doc/RootTreeDescription.html](doc/RootTreeDescription.html).
-This information is also available [in the workbook](https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook/RootTreeDescription).
-
-Macro-based analysis
-====================
-
-Analysis macro consists of histogram booking, event loop (histogram filling),
-histogram display.
-
-Start ROOT and load Delphes shared library:
-
-```
-   root -l
-   gSystem->Load("libDelphes");
-```
-
-Basic analysis macro:
-
-```
-{
-  // Create chain of root trees
-  TChain chain("Delphes");
-  chain.Add("delphes_output.root");
-  
-  // Create object of class ExRootTreeReader
-  ExRootTreeReader *treeReader = new ExRootTreeReader(&chain);
-  Long64_t numberOfEntries = treeReader->GetEntries();
-  
-  // Get pointers to branches used in this analysis
-  TClonesArray *branchElectron = treeReader->UseBranch("Electron");
-
-  // Book histograms
-  TH1 *histElectronPT = new TH1F("electron pt", "electron P_{T}", 50, 0.0, 100.0);
-
-  // Loop over all events
-  for(Int_t entry = 0; entry < numberOfEntries; ++entry)
-  {
-
-    // Load selected branches with data from specified event
-    treeReader->ReadEntry(entry);
-  
-    // If event contains at least 1 electron
-    if(branchElectron->GetEntries() > 0)
-    {
-      // Take first electron
-      Electron *electron = (Electron*) branchElectron->At(0);
-      
-      // Plot electron transverse momentum
-      histElectronPT->Fill(electron->PT);
-      
-      // Print electron transverse momentum
-      cout << electron->PT << endl;
-    }
-
-  }
-
-  // Show resulting histograms
-  histElectronPT->Draw();
+set ExecutionPath ListOfModuleNames
+set ExecutionPath {
+	ParticlePropagator
+	TrackEfficiency
+	TrackMomentumSmearing
+	...
+	TreeWriter
 }
 ```
+* hay un ejempo en la diapositiva 15
+* All the output ROOT tree branches are configured in the TreeWriter module
+* Para agregar un nuevo módulo, hay plantillas en `/modules/Example.h` y `/modules/Example.cc` y revisar la diapositiva 19
 
-More advanced macro-based analysis
-==================================
+## https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook/TutorialBologna
 
-The 'examples' directory contains ROOT macros [Example1.C](examples/Example1.C), [Example2.C](examples/Example2.C) and [Example3.C](examples/Example3.C).
+Las `cards` tienen la configuración del experimento a simular (CMS, ATLAS, etc).
 
-Here are the commands to run these ROOT macros:
+Each card can be schematically divided in three parts:
 
+* The "ExecutionPath" is where the simulation/reconstruction sequence of modules is defined
+* The list of modules configurations. Cada módulo se configura en `module` de acuerdo a las variables que cada uno defina.
+* The TreeWriter, where the user defines which objects he stores in the output tree.
+
+You can find an explanation for most modules here:
+
+https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook/Modules
+
+Hay una explicación muy clara de como implementar un nuevo módulo con un ejemplo en la sección `Part IV - Write a new module`.
+
+Add the following at the top of the card to run on 1k events only: `set MaxEvents 1000`
+
+## https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook/Tutorials/Pisa
+
+Tiene una breve descripción de cómo usar Pythia para simular eventos de algunas partículas en específico para luego usarlos como input en Delphes.
+
+## The Belle II Physics Book (Sección 4. Belle II Simulation)  
+
+Este capítulo contiene:
+* Event Generators (Pythia). Simulan los procesos físicos que se dan en la colisión.
+* Detector Simulation. Simulan los detectors del experimento.
+
+Algunos análisis requieren generadores de eventos más específicos. Un software importante en Belle II es `basf2`.
+
+
+# EJECUCIÓN
+Si se ejecuta el ejemplo de abajo, el punto de entrada para la aplicación está en `/readers/DelphesSTDHEP`
+
+# EJEMPLOS
+Para ejecutar el ejemplo `z_ee` (para descargarlo, ver el README de Delphes):
 ```
-   root -l
-   .X examples/Example1.C("delphes_output.root");
+$ ./DelphesSTDHEP cards/delphes_card_CMS.tcl delphes_output.root ../z_ee.hep
 ```
-
-or
-
+Y luego para ver algunas gráficas de este resultado, hay dos opciones:
 ```
-   root -l examples/Example1.C'("delphes_output.root")'
+$ root -l examples/Example1.C'("delphes_output.root")'
+$ python examples/Example1.py delphes_output.root
 ```
