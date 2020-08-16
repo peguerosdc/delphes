@@ -26,6 +26,11 @@ $ python examples/Example1.py delphes_output.root
 ```
 Como nota, el punto de entrada de este programa está en `/readers/DelphesSTDHEP.c`.
 
+Para utilizar la card de LHCb, hay que instalar las librerias de GSL:
+```
+$ sudo apt-get install libgsl-dev
+```
+
 ## Revisión de algunos recursos
 En `cards` están los experimentos/detectores a escoger en el lenguaje TCL.
 
@@ -140,7 +145,6 @@ Algunos análisis requieren generadores de eventos más específicos. Un softwar
 
 ## ¿Cómo implementar Belle II?
 1. Simular la física de las colisiones usando algún simulador de eventos.
-    * ¿Pythia funciona? Según el Physics Books, sí debería de funcionar.
-    * Creo que aquí es donde vendría la consideración de que Belle II es asimétrico.
-      * Pythia ya es usado en Belle II para simular las colisiones
+    * ¿Pythia funciona? Según el Physics Books, sí funciona.
 2. Revisar si los módulos ya existentes en Delphes sirven para simular los detectores de Belle II. Si no, hay que crear módulos propios.
+    * ¿Cómo consideramos que Belle II es asimétrico?
