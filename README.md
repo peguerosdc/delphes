@@ -112,13 +112,23 @@ Da un ejemplo de cómo funcionan los módulos en Delphes. No dice mucho más que
 
 Los arreglos a los que pueden acceder los módulos. ¿Estos arreglos se van actualizando (cada módulo los va modificando) o son fijos en las condiciones iniciales? Según un diagrama generado por el comando de la sección Data Flow, parece que se van actualizando y cada módulo tiene acceso a todos.
 
-### [Workbook . Data Flow](https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook/DataFlowDiagram)
+### [Workbook 9. Data Flow](https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook/DataFlowDiagram)
 
 Si no se instala graphviz, el programa no ejecuta:
 ```
 sudo apt install graphviz
 ```
 Podemos comparar el diagrama generado para CMS con alguna imagen [del flujo de partículas en el experimento](https://www.researchgate.net/profile/Mikael_Kuusela/publication/260003686/figure/fig1/AS:297130636922880@1447852872114/Illustration-of-the-detection-of-particles-at-the-CMS-experiment-Barney-2004-Each.png) para entender qué está pasando. ¿Cómo funcionaría esto para un experimento asimétrico?
+
+* ¿Qué son pile-up events? De wikipedia: In nuclear and particle physics, a situation where a particle detector is affected by several events at the same time.
+* ¿Qué manejo se le da a las long-lived particles?
+* ¿Qué son tower and tracks?
+* ¿Qué es MET?
+
+### [Workbook 10. Configuration File](https://cp3.irmp.ucl.ac.be/projects/delphes/wiki/WorkBook/ConfigFile)
+
+Explica como implementar un nuevo experimento (como Belle) en una card agrupando los módulos (detectores)
+
 
 ### The Belle II Physics Book (Sección 4. Belle II Simulation)  
 
@@ -128,12 +138,9 @@ Este capítulo contiene:
 
 Algunos análisis requieren generadores de eventos más específicos. Un software importante en Belle II es `basf2`.
 
-
 ## ¿Cómo implementar Belle II?
 1. Simular la física de las colisiones usando algún simulador de eventos.
     * ¿Pythia funciona? Según el Physics Books, sí debería de funcionar.
     * Creo que aquí es donde vendría la consideración de que Belle II es asimétrico.
       * Pythia ya es usado en Belle II para simular las colisiones
 2. Revisar si los módulos ya existentes en Delphes sirven para simular los detectores de Belle II. Si no, hay que crear módulos propios.
-
-
