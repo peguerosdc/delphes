@@ -13,6 +13,11 @@ Los problemas/errores que tuve durante la instalación fueron:
 $ source root/bin/thisroot.sh
 ```
 
+2. **Error in <TInterpreter::TCling::AutoLoad>: failure loading library libMathMore.so for ROOT::Math::GSLIntegrator** Este error ocurre al usar la card de LHCb. Hay que instalar GSL en Ubuntu ver (https://root-forum.cern.ch/t/failure-loading-library-libmathmore-so-for-root-gslintegrator/38597):
+```
+$ sudo apt-get install libgsl-dev
+```
+
 ## Ejecucion de prueba
 
 Para ejecutar el ejemplo `z_ee` (para descargarlo, ver el [README](./README.original.md) de Delphes):
