@@ -18,6 +18,11 @@ $ source root/bin/thisroot.sh
 $ sudo apt-get install libgsl-dev
 ```
 
+3. **libOpenGL.so.0: cannot open shared object file**. Ocurre al querer visualizar los eventos después de "make display".
+```
+$ sudo apt-get install libopengl0
+```
+
 ## Ejecucion de prueba
 
 Para ejecutar el ejemplo `z_ee` (para descargarlo, ver el [README](./README.original.md) de Delphes):
