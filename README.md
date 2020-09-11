@@ -41,6 +41,11 @@ Para utilizar la card de LHCb, hay que instalar las librerias de GSL:
 $ sudo apt-get install libgsl-dev
 ```
 
+## ROOT
+
+# ¿Por qué hay dos árboles muy parecidos?
+https://users.physics.ox.ac.uk/~huffman/MPhys/Mphys_first_steps.html
+
 ## Revisión de algunos recursos
 En `cards` están los experimentos/detectores a escoger en el lenguaje TCL.
 
